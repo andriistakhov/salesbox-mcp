@@ -53,6 +53,26 @@ Two options — **Docker (recommended)** or **systemd**.
 ### A note on the SDK security default
 The Streamable HTTP transport validates the `Origin` header on requests it processes; keeping the container bound to `127.0.0.1` and terminating TLS at a reverse proxy (below) is the safe setup. Always also set `MCP_AUTH_TOKEN`.
 
+### Quickest path — one-shot script (Docker + Caddy + firewall)
+
+On a fresh Ubuntu Hetzner box, with a DNS A record `mcp.yourdomain.com` → server IP:
+
+```bash
+# 1. Authenticate to GitHub once (private repo), then clone
+gh auth login            # or set up an SSH deploy key
+git clone https://github.com/andriistakhov/salesbox-mcp.git /opt/salesbox-mcp
+cd /opt/salesbox-mcp
+
+# 2. Run the installer with your domain
+sudo bash deploy/setup.sh mcp.yourdomain.com
+```
+
+The script installs Docker + Caddy, generates `.env` (multi-tenant: **empty** `SALESBOX_API_TOKEN`, a random `MCP_AUTH_TOKEN` it prints for you), builds and starts the container, configures Caddy for automatic HTTPS, and opens the firewall (22/80/443). Endpoint: `https://mcp.yourdomain.com/mcp`.
+
+To redeploy after pushing new code: `sudo bash deploy/update.sh`.
+
+The manual steps below do the same thing by hand.
+
 ### Option A — Docker + Caddy (auto HTTPS)
 
 On a fresh Hetzner Cloud Ubuntu box:
