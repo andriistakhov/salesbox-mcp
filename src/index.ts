@@ -48,8 +48,18 @@ async function startHttp(): Promise<void> {
       return;
     }
 
-    // Per-request SalesBox token override via header.
-    const salesboxToken = req.header("x-salesbox-token") || undefined;
+    // Per-request SalesBox token. Prefer the explicit X-Salesbox-Token header.
+    // If no auth gate is configured (MCP_AUTH_TOKEN empty), the standard
+    // `Authorization: Bearer <token>` is treated as the SalesBox token, so a
+    // client only needs to send its own SalesBox token and nothing else.
+    const authHeader = req.header("authorization");
+    const bearer = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice(7)
+      : undefined;
+    const salesboxToken =
+      req.header("x-salesbox-token") ||
+      (CONFIG.mcpAuthToken ? undefined : bearer) ||
+      undefined;
 
     const server = createServer();
     const transport = new StreamableHTTPServerTransport({
