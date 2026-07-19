@@ -98,28 +98,3 @@ claude mcp add salesbox --transport http https://mcp.salesbox.ua/mcp \
 ```bash
 curl -s https://mcp.salesbox.ua/health
 ```
-
----
-
-## 6. Для адміністратора сервера
-
-- Код: https://github.com/andriistakhov/salesbox-mcp
-- Розташування: `/opt/salesbox-mcp` на сервері
-- Логи: `cd /opt/salesbox-mcp && docker compose logs -f`
-- Перезапуск: `docker compose restart`
-- Оновлення після `git push`: `sudo bash deploy/update.sh`
-- Проксі/HTTPS: Caddy (`/etc/caddy/Caddyfile`), сертифікат Let's Encrypt автоматично.
-
-### Режим авторизації
-
-Поточний режим — **однотокенний**: у `.env` `MCP_AUTH_TOKEN` порожній, тож заголовок `Authorization: Bearer <...>` сприймається як SalesBox-токен.
-
-Ендпоінт при цьому **відкритий**: будь-хто з URL може викликати `tools/list`, але **зробити щось із даними без валідного SalesBox-токена не вийде** (SalesBox поверне `UNAUTHORIZED`).
-
-Якщо потрібен додатковий захист сервера від сторонніх звернень — впиши `MCP_AUTH_TOKEN` у `.env` і `docker compose up -d`. Тоді клієнти надсилають **два** заголовки:
-```json
-"headers": {
-  "Authorization": "Bearer <MCP_AUTH_TOKEN>",
-  "X-Salesbox-Token": "<ТВІЙ_SALESBOX_ТОКЕН>"
-}
-```
