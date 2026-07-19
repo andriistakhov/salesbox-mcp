@@ -1,0 +1,7 @@
+# Caddy reverse proxy with automatic HTTPS (Let's Encrypt).
+# Replace mcp.example.com with your domain (A record -> your Hetzner VPS IP).
+# Run:  caddy run --config /etc/caddy/Caddyfile
+
+mcp.example.com {
+	reverse_proxy 127.0.0.1:3000
+}

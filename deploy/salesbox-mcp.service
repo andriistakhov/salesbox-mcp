@@ -1,0 +1,21 @@
+[Unit]
+Description=SalesBox MCP server
+After=network.target
+
+[Service]
+Type=simple
+# Adjust to where you cloned the repo:
+WorkingDirectory=/opt/salesbox-mcp
+EnvironmentFile=/opt/salesbox-mcp/.env
+ExecStart=/usr/bin/node /opt/salesbox-mcp/dist/index.js
+Restart=on-failure
+RestartSec=5
+User=salesbox
+Group=salesbox
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

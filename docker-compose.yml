@@ -1,0 +1,16 @@
+services:
+  salesbox-mcp:
+    build: .
+    image: salesbox-mcp:latest
+    container_name: salesbox-mcp
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MCP_TRANSPORT: http
+      HOST: 0.0.0.0
+      PORT: 3000
+    ports:
+      # Bind to localhost only; put a reverse proxy (Caddy/Nginx) in front for TLS.
+      # Change to "3000:3000" to expose directly (protect it with MCP_AUTH_TOKEN).
+      - "127.0.0.1:3000:3000"
